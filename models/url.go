@@ -1,4 +1,4 @@
-package goapplesignin
+package models
 
 // AuthURLOptions argument used to generate auth url for apple signin
 type AuthURLOptions struct {
