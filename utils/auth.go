@@ -1,8 +1,12 @@
-package goapplesignin
+package utils
 
-import "github.com/BolajiOlajide/go-apple-signin/constants"
+import (
+	"github.com/BolajiOlajide/go-apple-signin/constants"
+	"github.com/BolajiOlajide/go-apple-signin/models"
+)
 
-func normalizeAuthOptions(options *AuthURLOptions) *AuthURLOptions {
+// NormalizeAuthOptions fills empty struct values with corresponding default value
+func NormalizeAuthOptions(options *models.AuthURLOptions) *models.AuthURLOptions {
 	if options.ResponseType == "" {
 		options.ResponseType = constants.AppleDefaultResponseType
 	}
