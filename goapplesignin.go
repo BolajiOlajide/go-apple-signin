@@ -5,6 +5,8 @@ import (
 	"net/url"
 
 	"github.com/BolajiOlajide/go-apple-signin/constants"
+	"github.com/BolajiOlajide/go-apple-signin/models"
+	"github.com/BolajiOlajide/go-apple-signin/utils"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -12,7 +14,7 @@ import (
 var validate *validator.Validate
 
 // GetAuthorizationURL returns an initiating auth for apple users
-func GetAuthorizationURL(options AuthURLOptions) (string, error) {
+func GetAuthorizationURL(options models.AuthURLOptions) (string, error) {
 	err := validate.Struct(options)
 	if err != nil {
 		return "", fmt.Errorf("One of the options doesn't meet the requirement. - %v", err)
@@ -24,7 +26,7 @@ func GetAuthorizationURL(options AuthURLOptions) (string, error) {
 		return "", fmt.Errorf("Cannot parse Apple Base URL. %v", err)
 	}
 
-	normalizeAuthOptions(&options)
+	utils.NormalizeAuthOptions(&options)
 
 	parsedURL.Path = "/auth/authorize"
 	parsedURL.ForceQuery = true
