@@ -11,13 +11,13 @@ import (
 )
 
 // use a single instance of Validate, it caches struct info
-var validate *validator.Validate
+var validate *validator.Validate = validator.New()
 
 // GetAuthorizationURL returns an initiating auth for apple users
 func GetAuthorizationURL(options models.AuthURLOptions) (string, error) {
-	err := validate.Struct(options)
+	err := validate.Struct(&options)
 	if err != nil {
-		return "", fmt.Errorf("One of the options doesn't meet the requirement. - %v", err)
+		return "", err
 	}
 
 	parsedURL, err := url.Parse(constants.AppleEndpointURL)
