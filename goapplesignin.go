@@ -17,6 +17,10 @@ import (
 // use a single instance of Validate, it caches struct info
 var validate *validator.Validate = validator.New()
 
+type AuthorizationTokenService interface {
+	GetAuthorizationToken() (string, error)
+}
+
 // GetAuthorizationURL returns an initiating auth for apple users
 func GetAuthorizationURL(options models.AuthURLOptions) (string, error) {
 	err := validate.Struct(&options)

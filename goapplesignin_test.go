@@ -3,6 +3,7 @@ package goapplesignin
 import (
 	"testing"
 
+	"github.com/BolajiOlajide/go-apple-signin/mocks"
 	"github.com/BolajiOlajide/go-apple-signin/models"
 	"github.com/stretchr/testify/assert"
 )
@@ -47,7 +48,11 @@ func TestGetAuthorizationToken(t *testing.T) {
 		RedirectURL: "https://example.com",
 	}
 	code := "randomCode"
-	token, err := GetAuthorizationToken(code, options, authTokenOption)
-	assert.NoError(t, err)
+	mockAuthToken := new(mocks.AuthorizationTokenService)
+	mockAuthToken.On("GetAuthorizationToken", code, options, authTokenOption).Return("newToken", nil)
+	authorizationTokenService := AuthorizationTokenService(mockAuthToken)
+	token, err := authorizationTokenService.GetAuthorizationToken()
+	assert.Nil(t, err, "Error should be nil")
 	assert.Equal(t, "newToken", token)
+
 }
