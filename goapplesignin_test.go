@@ -51,8 +51,10 @@ func TestGetAuthorizationToken(t *testing.T) {
 	mockAuthToken := new(mocks.AuthorizationTokenService)
 	mockAuthToken.On("GetAuthorizationToken", code, options, authTokenOption).Return("newToken", nil)
 	authorizationTokenService := AuthorizationTokenService(mockAuthToken)
-	token, err := authorizationTokenService.GetAuthorizationToken()
+	token, err := authorizationTokenService.GetAuthorizationToken(code, options, authTokenOption)
 	assert.Nil(t, err, "Error should be nil")
 	assert.Equal(t, "newToken", token)
+	mockAuthToken.AssertNumberOfCalls(t, "GetAuthorizationToken", 1)
+	mockAuthToken.AssertExpectations(t)
 
 }

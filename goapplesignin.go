@@ -18,7 +18,7 @@ import (
 var validate *validator.Validate = validator.New()
 
 type AuthorizationTokenService interface {
-	GetAuthorizationToken() (string, error)
+	GetAuthorizationToken(code string, options models.AuthURLOptions, authTokenOption models.AuthTokenOption) (string, error)
 }
 
 // GetAuthorizationURL returns an initiating auth for apple users
@@ -57,6 +57,7 @@ func GetAuthorizationToken(code string, options models.AuthURLOptions, authToken
 	if err != nil {
 		return "", err
 	}
+	utils.NormalizeAuthOptions(&options)
 	parsedURL, err := url.Parse(constants.AppleEndpointURL)
 	if err != nil {
 		return "", err
