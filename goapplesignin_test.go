@@ -37,3 +37,17 @@ func TestGetAuthorizationURL(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "https://appleid.apple.com/auth/authorize?response_type=code&response_mode=form_post&state=state&scope=email&client_id=randomClientID&redirect_uri=https://example.com", authURL, "The URL should be a valid URL")
 }
+
+func TestGetAuthorizationToken(t *testing.T) {
+	authTokenOption := models.AuthTokenOption{
+		ClientSecret: "randomSecret",
+	}
+	options := models.AuthURLOptions{
+		ClientID:    "randomClientID",
+		RedirectURL: "https://example.com",
+	}
+	code := "randomCode"
+	token, err := GetAuthorizationToken(code, options, authTokenOption)
+	assert.NoError(t, err)
+	assert.Equal(t, "newToken", token)
+}

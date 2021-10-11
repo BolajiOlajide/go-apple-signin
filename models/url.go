@@ -9,3 +9,7 @@ type AuthURLOptions struct {
 	ResponseMode string
 	State        string
 }
+
+type AuthTokenOption struct {
+	ClientSecret string `validate:"required"`
+}

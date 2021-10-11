@@ -1,7 +1,11 @@
 package goapplesignin
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"net/url"
 
 	"github.com/BolajiOlajide/go-apple-signin/constants"
@@ -42,4 +46,42 @@ func GetAuthorizationURL(options models.AuthURLOptions) (string, error) {
 	)
 
 	return parsedURL.String(), nil
+}
+
+func GetAuthorizationToken(code string, options models.AuthURLOptions, authTokenOption models.AuthTokenOption) (string, error) {
+	err := validate.Struct(&options)
+	if err != nil {
+		return "", err
+	}
+	parsedURL, err := url.Parse(constants.AppleEndpointURL)
+	if err != nil {
+		return "", err
+
+	}
+	parsedURL.Path = "/auth/token"
+	requestBody, err := json.Marshal(map[string]interface{}{
+		"client_id":     options.ClientID,
+		"code":          code,
+		"client_secret": authTokenOption.ClientSecret,
+		"grant_type":    "authorization_code",
+		"redirect_uri":  options.RedirectURL,
+	})
+	if err != nil {
+		return "", err
+
+	}
+
+	resp, err := http.Post(parsedURL.Path, "application/x-www-form-urlencoded", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return "", err
+
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+
+	}
+
+	return string(body), nil
 }
