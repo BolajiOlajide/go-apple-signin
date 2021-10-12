@@ -59,7 +59,6 @@ func GetAuthorizationToken(code string, options models.AuthTokenOption) (string,
 		return "", errors.New("client_id, client_secret, and redirect_url are required")
 	}
 
-	utils.NormalizeAuthTokenOptions(&options)
 	parsedURL, err := url.Parse(constants.AppleEndpointURL)
 	if err != nil {
 		return "", err

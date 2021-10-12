@@ -25,22 +25,3 @@ func NormalizeAuthOptions(options *models.AuthURLOptions) *models.AuthURLOptions
 
 	return options
 }
-func NormalizeAuthTokenOptions(options *models.AuthTokenOption) *models.AuthTokenOption {
-	if options.ResponseType == "" {
-		options.ResponseType = constants.AppleDefaultResponseType
-	}
-
-	if options.ResponseMode == "" {
-		options.ResponseMode = constants.AppleDefaultResponseMode
-	}
-
-	if options.Scope == "" {
-		options.Scope = constants.AppleDefaultScope
-	}
-
-	if options.State == "" {
-		options.State = constants.AppleDefaultState
-	}
-
-	return options
-}
