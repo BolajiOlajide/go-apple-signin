@@ -3,6 +3,7 @@ package goapplesignin
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -55,7 +56,11 @@ func GetAuthorizationURL(options models.AuthURLOptions) (string, error) {
 func GetAuthorizationToken(code string, options models.AuthURLOptions, authTokenOption models.AuthTokenOption) (string, error) {
 	err := validate.Struct(&options)
 	if err != nil {
-		return "", err
+		return "", errors.New("client id and redirect url are required")
+	}
+	validteErr := validate.Struct(&authTokenOption)
+	if validteErr != nil {
+		return "", errors.New("client secret is required")
 	}
 	utils.NormalizeAuthOptions(&options)
 	parsedURL, err := url.Parse(constants.AppleEndpointURL)
