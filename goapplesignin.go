@@ -19,7 +19,7 @@ import (
 var validate *validator.Validate = validator.New()
 
 type AuthorizationTokenService interface {
-	GetAuthorizationToken(code string, options models.AuthURLOptions, authTokenOption models.AuthTokenOption) (string, error)
+	GetAuthorizationToken(code string, option models.AuthTokenOption) (string, error)
 }
 
 // GetAuthorizationURL returns an initiating auth for apple users
@@ -53,16 +53,13 @@ func GetAuthorizationURL(options models.AuthURLOptions) (string, error) {
 	return parsedURL.String(), nil
 }
 
-func GetAuthorizationToken(code string, options models.AuthURLOptions, authTokenOption models.AuthTokenOption) (string, error) {
+func GetAuthorizationToken(code string, options models.AuthTokenOption) (string, error) {
 	err := validate.Struct(&options)
 	if err != nil {
-		return "", errors.New("client id and redirect url are required")
+		return "", errors.New("client_id, client_secret, and redirect_url are required")
 	}
-	validteErr := validate.Struct(&authTokenOption)
-	if validteErr != nil {
-		return "", errors.New("client secret is required")
-	}
-	utils.NormalizeAuthOptions(&options)
+
+	utils.NormalizeAuthTokenOptions(&options)
 	parsedURL, err := url.Parse(constants.AppleEndpointURL)
 	if err != nil {
 		return "", err
@@ -72,7 +69,7 @@ func GetAuthorizationToken(code string, options models.AuthURLOptions, authToken
 	requestBody, err := json.Marshal(map[string]interface{}{
 		"client_id":     options.ClientID,
 		"code":          code,
-		"client_secret": authTokenOption.ClientSecret,
+		"client_secret": options.ClientSecret,
 		"grant_type":    "authorization_code",
 		"redirect_uri":  options.RedirectURL,
 	})

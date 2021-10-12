@@ -42,20 +42,19 @@ func TestGetAuthorizationURL(t *testing.T) {
 
 func TestGetAuthorizationToken(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		authTokenOption := models.AuthTokenOption{
+		options := models.AuthTokenOption{
 			ClientSecret: "randomSecret",
+			ClientID:     "randomClientID",
+			RedirectURL:  "https://example.com",
 		}
-		options := models.AuthURLOptions{
-			ClientID:    "randomClientID",
-			RedirectURL: "https://example.com",
-		}
+
 		code := "randomCode"
 
 		mockAuthToken := new(mocks.AuthorizationTokenService)
-		mockAuthToken.On("GetAuthorizationToken", code, options, authTokenOption).Return("newToken", nil)
+		mockAuthToken.On("GetAuthorizationToken", code, options).Return("newToken", nil)
 
 		authorizationTokenService := AuthorizationTokenService(mockAuthToken)
-		token, err := authorizationTokenService.GetAuthorizationToken(code, options, authTokenOption)
+		token, err := authorizationTokenService.GetAuthorizationToken(code, options)
 
 		assert.Nil(t, err, "Error should be nil")
 		assert.Equal(t, "newToken", token)
@@ -64,19 +63,17 @@ func TestGetAuthorizationToken(t *testing.T) {
 		mockAuthToken.AssertExpectations(t)
 	})
 	t.Run("without client id", func(t *testing.T) {
-		authTokenOption := models.AuthTokenOption{
+		options := models.AuthTokenOption{
 			ClientSecret: "randomSecret",
 		}
-		options := models.AuthURLOptions{
-			//	RedirectURL: "https://example.com",
-		}
+
 		code := "randomCode"
 		mockAuthToken := new(mocks.AuthorizationTokenService)
 		expectedError := errors.New("client id and redirect url are required")
 
-		mockAuthToken.On("GetAuthorizationToken", code, options, authTokenOption).Return("", expectedError)
+		mockAuthToken.On("GetAuthorizationToken", code, options).Return("", expectedError)
 		authorizationTokenService := AuthorizationTokenService(mockAuthToken)
-		token, err := authorizationTokenService.GetAuthorizationToken(code, options, authTokenOption)
+		token, err := authorizationTokenService.GetAuthorizationToken(code, options)
 		assert.Equal(t, "", token, "the token should be empty")
 		assert.Error(t, err, "An error should be returned because the required fields are empty.")
 		assert.EqualError(t, err, expectedError.Error())
@@ -84,19 +81,19 @@ func TestGetAuthorizationToken(t *testing.T) {
 		mockAuthToken.AssertExpectations(t)
 	})
 	t.Run("without client secret", func(t *testing.T) {
-		authTokenOption := models.AuthTokenOption{}
-		options := models.AuthURLOptions{
+		options := models.AuthTokenOption{
 			ClientID:    "randomClientID",
 			RedirectURL: "https://example.com",
 		}
+
 		code := "randomCode"
 
 		mockAuthToken := new(mocks.AuthorizationTokenService)
 		expectedError := errors.New("client secret is required")
 
-		mockAuthToken.On("GetAuthorizationToken", code, options, authTokenOption).Return("", expectedError)
+		mockAuthToken.On("GetAuthorizationToken", code, options).Return("", expectedError)
 		authorizationTokenService := AuthorizationTokenService(mockAuthToken)
-		token, err := authorizationTokenService.GetAuthorizationToken(code, options, authTokenOption)
+		token, err := authorizationTokenService.GetAuthorizationToken(code, options)
 
 		assert.Equal(t, "", token, "the token should be empty")
 		assert.Error(t, err, "An error should be returned because the required fields are empty.")

@@ -12,20 +12,20 @@ type AuthorizationTokenService struct {
 	mock.Mock
 }
 
-// GetAuthorizationToken provides a mock function with given fields: code, options, authTokenOption
-func (_m *AuthorizationTokenService) GetAuthorizationToken(code string, options models.AuthURLOptions, authTokenOption models.AuthTokenOption) (string, error) {
-	ret := _m.Called(code, options, authTokenOption)
+// GetAuthorizationToken provides a mock function with given fields: code, option
+func (_m *AuthorizationTokenService) GetAuthorizationToken(code string, option models.AuthTokenOption) (string, error) {
+	ret := _m.Called(code, option)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(string, models.AuthURLOptions, models.AuthTokenOption) string); ok {
-		r0 = rf(code, options, authTokenOption)
+	if rf, ok := ret.Get(0).(func(string, models.AuthTokenOption) string); ok {
+		r0 = rf(code, option)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, models.AuthURLOptions, models.AuthTokenOption) error); ok {
-		r1 = rf(code, options, authTokenOption)
+	if rf, ok := ret.Get(1).(func(string, models.AuthTokenOption) error); ok {
+		r1 = rf(code, option)
 	} else {
 		r1 = ret.Error(1)
 	}
