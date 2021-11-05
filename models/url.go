@@ -9,3 +9,8 @@ type AuthURLOptions struct {
 	ResponseMode string
 	State        string
 }
+
+type RefreshAuthOptions struct {
+	ClientID     string `validate:"required"`
+	ClientSecret string `validate:"required"`
+}
