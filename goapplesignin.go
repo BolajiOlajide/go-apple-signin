@@ -77,7 +77,7 @@ func GetAuthorizationToken(code string, options models.AuthTokenOption) (string,
 
 	}
 
-	resp, err := http.Post(parsedURL.Path, "application/x-www-form-urlencoded", bytes.NewBuffer(requestBody))
+	resp, err := http.Post(parsedURL.String(), "application/x-www-form-urlencoded", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return "", err
 
