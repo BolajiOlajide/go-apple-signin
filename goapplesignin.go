@@ -1,7 +1,12 @@
 package goapplesignin
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"net/url"
 
 	"github.com/BolajiOlajide/go-apple-signin/constants"
@@ -12,6 +17,10 @@ import (
 
 // use a single instance of Validate, it caches struct info
 var validate *validator.Validate = validator.New()
+
+type AuthorizationTokenService interface {
+	GetAuthorizationToken(code string, option models.AuthTokenOption) (string, error)
+}
 
 // GetAuthorizationURL returns an initiating auth for apple users
 func GetAuthorizationURL(options models.AuthURLOptions) (string, error) {
@@ -42,4 +51,43 @@ func GetAuthorizationURL(options models.AuthURLOptions) (string, error) {
 	)
 
 	return parsedURL.String(), nil
+}
+
+func GetAuthorizationToken(code string, options models.AuthTokenOption) (string, error) {
+	err := validate.Struct(&options)
+	if err != nil {
+		return "", errors.New("client_id, client_secret, and redirect_url are required")
+	}
+
+	parsedURL, err := url.Parse(constants.AppleEndpointURL)
+	if err != nil {
+		return "", err
+
+	}
+	parsedURL.Path = "/auth/token"
+	requestBody, err := json.Marshal(map[string]interface{}{
+		"client_id":     options.ClientID,
+		"code":          code,
+		"client_secret": options.ClientSecret,
+		"grant_type":    "authorization_code",
+		"redirect_uri":  options.RedirectURL,
+	})
+	if err != nil {
+		return "", err
+
+	}
+
+	resp, err := http.Post(parsedURL.String(), "application/x-www-form-urlencoded", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return "", err
+
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+
+	}
+
+	return string(body), nil
 }
